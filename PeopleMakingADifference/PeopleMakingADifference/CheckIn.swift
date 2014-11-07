@@ -41,43 +41,50 @@ class CheckIn: UIViewController
       (sender as UITextField).resignFirstResponder();
    }
    
-   func getCurrentTime() -> String
+    
+    func getCurrentTimeString() -> String
+    {
+        //create variables that hold the current date's info
+        let currentDate = NSDate();
+        let calendar = NSCalendar.currentCalendar()
+        let components = calendar.components(.CalendarUnitHour | .CalendarUnitMinute, fromDate: currentDate)
+        var hour = components.hour
+        let minute = components.minute
+        
+        var timeOfDay = "AM"
+        if(hour > 11)
+        {
+            //Make it a 12 Hour Time display
+            if(hour > 12)
+            {
+                hour = hour - 12;
+            }
+            
+            //If the hour is past 12, change timeofDay to PM
+            timeOfDay = " PM"
+        }
+        //24 hour clock displays 12 AM as 0:00, so change to display 12:00
+        if(hour == 0)
+        {
+            hour = 12;
+        }
+        
+        var hourText = String(hour)
+        var minText = String(minute)
+        if(minute < 10)
+        {
+            minText = "0" + minText
+        }
+        
+        var checkedInAt = hourText + ":" + minText + timeOfDay
+        return checkedInAt
+        
+    }
+
+    
+   func getCurrentTimeDate() -> NSDate
    {
-      //create variables that hold the current date's info
-      let currentDate = NSDate();
-      let calendar = NSCalendar.currentCalendar()
-      let components = calendar.components(.CalendarUnitHour | .CalendarUnitMinute, fromDate: currentDate)
-      var hour = components.hour
-      let minute = components.minute
-      
-      var timeOfDay = "AM"
-      if(hour > 11)
-      {
-         //Make it a 12 Hour Time display
-         if(hour > 12)
-         {
-            hour = hour - 12;
-         }
-         
-         //If the hour is past 12, change timeofDay to PM
-         timeOfDay = " PM"
-      }
-      //24 hour clock displays 12 AM as 0:00, so change to display 12:00
-      if(hour == 0)
-      {
-         hour = 12;
-      }
-      
-      var hourText = String(hour)
-      var minText = String(minute)
-      if(minute < 10)
-      {
-         minText = "0" + minText
-      }
-      
-      var checkedInAt = hourText + ":" + minText + timeOfDay
-      return checkedInAt
-   
+    return NSDate().dateByAddingTimeInterval(-1*60*60*5)
    }
    
    
@@ -117,10 +124,8 @@ class CheckIn: UIViewController
                             } 
                             else 
                             {
-                                timeUpdate["ArrivalTime"]=NSDate()
-                                var apple = NSDate()
-
-                                println("\(apple)")
+                                timeUpdate["ArrivalTime"]=self.getCurrentTimeDate()
+              
                                 timeUpdate.saveEventually()
                                 
                                
@@ -133,7 +138,7 @@ class CheckIn: UIViewController
                   	   //Pulls out Volunteers Info
                   	   var vName = (object["Name"] as String)
                   	   var eName = "PMD"
-                  	   var cTime = self.getCurrentTime()
+                  	   var cTime = self.getCurrentTimeString()
                   	   var sBegin = (object["shiftStarts"] as String)
                   	   var sEnd = (object["shiftEnds"] as String)
                   	   var myTask  = (object["Assignment"] as String)

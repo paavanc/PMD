@@ -16,7 +16,14 @@ class CheckOut: UIViewController
       // Do any additional setup after loading the view, typically from a nib.
    }
    
-   func getCurrentTime() -> String
+    
+    func getCurrentTimeDate() -> NSDate
+    {
+        return NSDate().dateByAddingTimeInterval(-1*60*60*5)
+    }
+
+    
+   func getCurrentTimeString() -> String
    {
       //create variables that hold the current date's info
       let currentDate = NSDate();
@@ -91,7 +98,32 @@ class CheckOut: UIViewController
                                     }
                                     else
                                     {
-                                        timeUpdate["DepartureTime"]=self.getCurrentTime()
+                                        let signInTime=timeUpdate["ArrivalTime"]
+                                        
+                                        let calendar = NSCalendar.currentCalendar()
+                                        let components = calendar.components(.CalendarUnitHour | .CalendarUnitMinute, fromDate: signInTime as NSDate)
+                                        var hour = components.hour
+                                        let minute = components.minute
+                                        
+                                        
+                                        timeUpdate["DepartureTime"]=self.getCurrentTimeDate()
+                                        
+                                        
+                                        let calendarOut = NSCalendar.currentCalendar()
+                                        let componentsOut = calendarOut.components(.CalendarUnitHour | .CalendarUnitMinute, fromDate: self.getCurrentTimeDate())
+                                        var hourOut = componentsOut.hour
+                                        let minuteOut = componentsOut.minute
+                                        
+                                        var TotalHours=hourOut-hour
+                                        var TotalMins=minuteOut-minute
+                                        
+                                        var TotalHoursText=String(TotalHours)
+                                        var TotalMinsText=String(TotalMins)
+                                        var TotalTimeText=TotalHoursText + " Hours and " + TotalMinsText + " minutes"
+                                        
+                                         timeUpdate["TotalTime"]=TotalTimeText
+                                        
+                                        
                                         timeUpdate.saveEventually()
                                         
                                     }
